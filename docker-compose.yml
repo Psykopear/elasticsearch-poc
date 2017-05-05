@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+  elasticsearch:
+    image: elasticsearch:alpine
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/logs
+      - elastic-data:/usr/share/elasticsearch/data
+
+volumes:
+  elastic-data:
