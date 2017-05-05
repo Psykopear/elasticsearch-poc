@@ -12,6 +12,7 @@ def generate_uuid_list(num=10):
 # Generate users
 USER_IDS = generate_uuid_list(50)
 
+# Resource types
 RESOURCE_TYPES = [
     'segment',
     'recording',
@@ -32,13 +33,14 @@ METRIC_TYPES = {
     'activity': ['time'],
 }
 
+# Random values
 VALUES = {
     # Let's assume time in seconds
-    'time': [random.randint(1000, 9999999) for i in range(1000)],
+    'time': lambda: random.randint(1000, 9999999),
     # Jump height in cm
-    'jump_height': [random.randint(50, 500) for i in range(1000)],
+    'jump_height': lambda: random.randint(50, 500),
     # jump length in cm
-    'jump_length': [random.randint(50, 1000) for i in range(1000)]
+    'jump_length': lambda: random.randint(50, 1000)
 }
 
 
@@ -55,7 +57,8 @@ def gen_row():
     resource_id = random.choice(RESOURCE_IDS[resource_type])
 
     metric_type = random.choice(METRIC_TYPES[resource_type])
-    value = random.choice(VALUES[metric_type])
+    # The values dict elements are functions
+    value = VALUES[metric_type]()
 
     data = {
         "metric_type": metric_type,
@@ -70,9 +73,8 @@ def gen_row():
 
 if __name__ == '__main__':
     with open('test-data.json', 'w') as f:
+        # Write 10000 records to the file
         for i in range(0, 10000):
             f.write('{"index":{"_id":%s}}\n' % i)
             f.write(json.dumps(gen_row()))
             f.write('\n')
-
-
