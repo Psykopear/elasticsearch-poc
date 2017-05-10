@@ -64,11 +64,15 @@ Check the index:
     $ curl -XGET 'localhost:9200/_cat/indices?v&pretty'
 
 
-Optional: generate test data (a sample is available in the repo, and will be overwritten)
+To have some sample data you can either extract the sample inside the repo:
+
+    $ tar xf test-data.tar.bz2
+
+Or generate test data (you will have to change the queries requesting for sepcific ids accordingly):
 
     $ python gen_data.py
 
-This will write 10000 records into a file named test-data.json, edit the script to change the data generated
+This will write 10000 records into a file named test-data.json, edit the script to change the amount of data generated.
 
 Send test data to ES:
 
