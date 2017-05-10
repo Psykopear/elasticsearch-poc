@@ -12,26 +12,22 @@ def generate_uuid_list(num=10):
 # Generate users
 USER_IDS = generate_uuid_list(50)
 
-# Resource types
-RESOURCE_TYPES = [
-    'segment',
-    'recording',
-    'activity',
-]
 
-# Generate  some segments, recordings and activities
-RESOURCE_IDS = {
+# Generate  some metadata: segments, recordings and activities
+METADATA = {
     'segment': generate_uuid_list(20),
     'recording': generate_uuid_list(200),
     'activity': generate_uuid_list(100),
 }
 
+
 # Possible metric types
-METRIC_TYPES = {
-    'segment': ['time', 'jump_height', 'jump_length'],
-    'recording': ['time', 'jump_height', 'jump_length'],
-    'activity': ['time'],
-}
+METRIC_TYPES = [
+    'time',
+    'jump_height',
+    'jump_length',
+]
+
 
 # Random values
 VALUES = {
@@ -50,22 +46,37 @@ def gen_row():
     Generate a meaningfull dict of values representing a record
     """
     user_id = random.choice(USER_IDS)
-    timestamp = datetime.now() - timedelta(days=random.randint(0, 365),
-                                           milliseconds=random.randint(0, 100000000))
 
-    resource_type = random.choice(RESOURCE_TYPES)
-    resource_id = random.choice(RESOURCE_IDS[resource_type])
+    now = datetime.now()
+    delta = timedelta(
+        days=random.randint(0, 365),
+        milliseconds=random.randint(0, 1e8))
+    timestamp = now - delta
 
-    metric_type = random.choice(METRIC_TYPES[resource_type])
+    metric_type = random.choice(METRIC_TYPES)
     # The values dict elements are functions
     value = VALUES[metric_type]()
+
+    metadata = []
+
+    # Avoid adding two identical resource types
+    choices = list(METADATA.keys())
+    random.shuffle(choices)
+    for i in range(0, random.randint(1, len(METADATA))):
+        resource_type = choices.pop()
+        resource_id = random.choice(METADATA[resource_type])
+        metadata.append(
+            {
+                "resource_type": resource_type,
+                "resource_id": resource_id
+            }
+        )
 
     data = {
         "metric_type": metric_type,
         "user_id": user_id,
         "timestamp": timestamp.isoformat(),
-        "resource_id": resource_id,
-        "resource_type": resource_type,
+        "metadata": metadata,
         "value": value,
     }
     return data
@@ -74,7 +85,7 @@ def gen_row():
 if __name__ == '__main__':
     with open('test-data.json', 'w') as f:
         # Write 10000 records to the file
-        for i in range(0, 10000):
+        for i in range(0, 100000):
             f.write('{"index":{"_id":%s}}\n' % i)
             f.write(json.dumps(gen_row()))
             f.write('\n')
