@@ -1,0 +1,14 @@
+from elasticsearch_dsl import DocType, Keyword, Date, Float
+
+class BasicMetric(DocType):
+    metric_type = Keyword()
+    user_id = Keyword()
+    timestamp = Date()
+    value = Float()
+    metadata = Nested(
+        doc_class=Resource,
+        properties={
+            'type': Keyword(),
+            'unique_id': Keyword(),
+        }
+    )
