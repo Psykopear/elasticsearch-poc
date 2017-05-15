@@ -12,3 +12,7 @@ to redefine them after the system is running.
 "Elasticsearch is a distrbuited, RESTful search and
 analytics engine capable of solving a growing number
 of use cases"
+
+Es is a great tool when it comes to filtering and aggregations
+of data, but it shouldn't be used as a data storage systems due
+to some known problems.
